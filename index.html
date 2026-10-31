@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HeyLocket - Nâng Cấp Locket Gold Tự Động</title>
+<style>
+:root{
+  --bg:#090d16; --card:#131926; --line:#232d42;
+  --gold:#f59e0b; --gold-h:#d97706; --info:#38bdf8; --zalo:#0068ff;
+  --ok:#22c55e; --err:#ef4444; --text:#e5e9f2; --muted:#8b97b0; --card2:#0f1420;
+}
+*,*::before,*::after{box-sizing:border-box;border-radius:0px !important}
+[hidden]{display:none !important}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+  font-family:'JetBrains Mono','SF Mono',Consolas,monospace;font-size:14px;line-height:1.55}
+body.modal-open{overflow:hidden}
+h1,h2,h3,h4{margin:0;font-weight:700}
+a{color:var(--info);text-decoration:none}
+a:hover{text-decoration:underline}
+small{color:var(--muted)}
+::selection{background:var(--gold);color:#000}
+
+/* ---------- Form controls ---------- */
+input,select,textarea,button{font-family:inherit;font-size:14px}
+input[type=text],input[type=password],input[type=email],input[type=number],input[type=url]{
+  width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);padding:11px 12px;outline:none}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+input::placeholder{color:#4d5a76}
+input[type=checkbox],input[type=radio]{accent-color:var(--gold);width:16px;height:16px;margin:0}
+label.lbl{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;border:1px solid var(--gold);
+  background:var(--gold);color:#000;font-weight:700;padding:11px 18px;text-transform:uppercase;letter-spacing:.4px;transition:background .15s}
+.btn:hover{background:var(--gold-h);border-color:var(--gold-h);text-decoration:none}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btn-ghost:hover{background:var(--line);border-color:var(--line)}
+.btn-info{background:transparent;color:var(--info);border-color:var(--info)}
+.btn-info:hover{background:var(--info);color:#000;border-color:var(--info)}
+.btn-zalo{background:var(--zalo);border-color:var(--zalo);color:#fff}
+.btn-zalo:hover{background:#0052cc;border-color:#0052cc;color:#fff}
+.btn-danger{background:transparent;color:var(--err);border-color:var(--err)}
+.btn-danger:hover{background:var(--err);color:#fff;border-color:var(--err)}
+.btn-sm{padding:6px 11px;font-size:12px}
+.btn-block{width:100%}
+.msg{margin-top:12px;padding:10px 12px;border:1px solid var(--line);font-size:13px}
+.msg.err{border-color:var(--err);color:var(--err);background:rgba(239,68,68,.08)}
+.msg.ok{border-color:var(--ok);color:var(--ok);background:rgba(34,197,94,.08)}
+.msg:empty{display:none}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);padding:20px;margin-bottom:18px}
+.card > h2{font-size:15px;color:var(--gold);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.mt{margin-top:14px}
+.hint{color:var(--muted);font-size:12px;margin-top:8px}
+
+/* ---------- Auth ---------- */
+.auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.auth-box{width:100%;max-width:430px;background:var(--card);border:1px solid var(--line);padding:28px}
+.brand{font-size:22px;font-weight:800;letter-spacing:1px}
+.brand span{color:var(--gold)}
+.brand-sub{color:var(--muted);font-size:12px;margin:4px 0 20px}
+.tabs-mini{display:flex;border:1px solid var(--line);margin-bottom:6px}
+.tabs-mini button{flex:1;background:transparent;border:0;color:var(--muted);padding:10px 6px;cursor:pointer;font-weight:700;text-transform:uppercase;font-size:12px}
+.tabs-mini button.active{background:var(--gold);color:#000}
+.check{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--muted);font-size:13px;cursor:pointer}
+.links{display:flex;justify-content:space-between;margin-top:16px;font-size:12px}
+.links a{cursor:pointer}
+
+/* ---------- Header / Nav ---------- */
+.hdr{background:var(--card);border-bottom:1px solid var(--line)}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;max-width:1040px;margin:0 auto}
+.hdr-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.coin-badge{border:1px solid var(--gold);color:var(--gold);padding:6px 12px;font-weight:800;background:rgba(245,158,11,.08);white-space:nowrap}
+.coin-badge.flash{animation:flash .7s}
+@keyframes flash{0%{background:var(--gold);color:#000}100%{background:rgba(245,158,11,.08);color:var(--gold)}}
+.user-chip{border:1px solid var(--line);padding:6px 10px;color:var(--muted);font-size:12px}
+.user-chip b{color:var(--text)}
+.role-tag{display:inline-block;margin-left:6px;padding:0 6px;border:1px solid var(--info);color:var(--info);font-size:10px;text-transform:uppercase}
+.role-tag.admin{border-color:var(--gold);color:var(--gold)}
+.nav{background:var(--card2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.nav-in{display:flex;max-width:1040px;margin:0 auto;overflow-x:auto}
+.nav button{flex:1 0 auto;background:transparent;border:0;border-bottom:3px solid transparent;color:var(--muted);
+  padding:14px 18px;cursor:pointer;font-weight:700;white-space:nowrap}
+.nav button:hover{color:var(--text)}
+.nav button.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(245,158,11,.05)}
+main{padding:22px 0 90px}
+
+/* ---------- Perks ---------- */
+.perks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:600px){.perks{grid-template-columns:1fr}}
+.perk{border:1px solid var(--line);background:var(--card2);padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.perk i{font-style:normal;font-size:18px}
+
+/* ---------- Profile ---------- */
+.profile-view{margin-top:16px;min-height:60px}
+.profile-empty{color:var(--muted);border:1px dashed var(--line);padding:16px;text-align:center;font-size:13px}
+.profile-card{display:flex;gap:18px;align-items:center;border:1px solid var(--line);background:var(--card2);padding:16px;flex-wrap:wrap}
+.avatar{position:relative;width:96px;height:96px;border:2px solid var(--line);background:var(--bg);flex:0 0 auto;overflow:hidden}
+.avatar.gold{border-color:var(--gold);box-shadow:0 0 15px rgba(245,158,11,0.6)}
+.avatar .avatar-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:800;color:var(--muted);text-transform:uppercase}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:var(--bg)}
+.p-name{font-size:17px;font-weight:700;word-break:break-all}
+.badge{display:inline-block;padding:3px 9px;font-size:11px;font-weight:800;border:1px solid var(--line);text-transform:uppercase;letter-spacing:.3px}
+.badge.gold{border-color:var(--gold);color:var(--gold);background:rgba(245,158,11,.1)}
+.badge.none{border-color:var(--muted);color:var(--muted)}
+.badge.ok{border-color:var(--ok);color:var(--ok);background:rgba(34,197,94,.1)}
+.badge.bad{border-color:var(--err);color:var(--err);background:rgba(239,68,68,.1)}
+.badge.test{border-color:var(--info);color:var(--info)}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--gold);animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---------- Packages ---------- */
+.pkgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.pkg{position:relative;display:flex;flex-direction:column;gap:3px;border:1px solid var(--line);background:var(--card2);padding:14px;cursor:pointer;transition:border-color .15s}
+.pkg:hover{border-color:#3a4968}
+.pkg.selected{border-color:var(--gold);background:rgba(245,158,11,.07);box-shadow:inset 0 0 0 1px var(--gold)}
+.pkg input{position:absolute;top:12px;right:12px}
+.pkg-name{font-weight:800}
+.pkg-meta{color:var(--muted);font-size:12px}
+.pkg-price{color:var(--gold);font-size:22px;font-weight:800;margin-top:6px}
+.pkg-price small{font-size:12px}
+.pkg-vnd{color:var(--muted);font-size:12px}
+.buy-sum{margin-top:14px;padding:12px;border:1px dashed var(--line);font-size:13px;color:var(--muted)}
+.buy-sum b{color:var(--text)}
+
+/* ---------- Orders ---------- */
+.empty{border:1px dashed var(--line);padding:30px;text-align:center;color:var(--muted)}
+.order{border:1px solid var(--line);background:var(--card);padding:16px;margin-bottom:14px}
+.order.flash{animation:oflash 1.6s}
+@keyframes oflash{0%,40%{border-color:var(--gold);box-shadow:0 0 14px rgba(245,158,11,.5)}100%{border-color:var(--line);box-shadow:none}}
+.order-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.oid{color:var(--gold);font-weight:800;font-size:16px}
+.kvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 14px}
+.kvgrid dt{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.kvgrid dd{margin:2px 0 0;font-weight:700;word-break:break-all}
+
+/* ---------- Topup ---------- */
+.amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:480px){.amounts{grid-template-columns:repeat(2,1fr)}}
+.amt{background:var(--card2);color:var(--text);border:1px solid var(--line);padding:14px 6px;cursor:pointer;font-weight:800;font-size:15px}
+.amt small{display:block;font-weight:400;margin-top:2px}
+.amt:hover{border-color:#3a4968}
+.amt.selected{border-color:var(--gold);background:rgba(245,158,11,.1);color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.rate{border:1px solid var(--info);color:var(--info);background:rgba(56,189,248,.07);padding:10px 12px;font-weight:700;margin-bottom:14px}
+.qr-box{background:#fff;padding:10px;border:1px solid var(--line);text-align:center;min-height:120px}
+.qr-box img{display:block;width:100%;max-width:340px;margin:0 auto;height:auto}
+.qr-err{color:#333;padding:30px 10px;font-size:13px}
+.info-line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.info-line:last-of-type{border-bottom:0}
+.info-line span:first-child{color:var(--muted);font-size:12px;text-transform:uppercase}
+.info-line .val{font-weight:700;word-break:break-all;text-align:right}
+
+/* ---------- Tables ---------- */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line)}
+table.tbl{width:100%;border-collapse:collapse;min-width:620px}
+.tbl th,.tbl td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+.tbl th{background:var(--card2);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.num{color:var(--gold);font-weight:800}
+.tbl .acts{display:flex;gap:6px}
+.pricegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.pricegrid .lbl{margin-top:0}
+
+/* ---------- Modal ---------- */
+.overlay{position:fixed;inset:0;background:rgba(3,5,10,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:1000;overflow-y:auto}
+.dialog{width:100%;max-width:540px;background:var(--card);border:1px solid var(--gold);box-shadow:0 0 0 1px #000,0 20px 60px rgba(0,0,0,.6);max-height:92vh;display:flex;flex-direction:column}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--card2)}
+.dlg-head h3{font-size:14px;color:var(--gold);text-transform:uppercase;letter-spacing:.6px}
+.dlg-head .x{background:transparent;border:1px solid var(--line);color:var(--muted);cursor:pointer;width:30px;height:30px}
+.dlg-head .x:hover{color:var(--text);border-color:var(--muted)}
+.dlg-body{padding:18px;overflow-y:auto}
+.dlg-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
+.kv{width:100%;border-collapse:collapse}
+.kv td{padding:9px 0;border-bottom:1px dashed var(--line)}
+.kv tr:last-child td{border-bottom:0}
+.kv td:first-child{color:var(--muted);font-size:12px;text-transform:uppercase}
+.kv td:last-child{text-align:right;font-weight:700;word-break:break-all}
+.kv .pos{color:var(--ok)} .kv .neg{color:var(--err)} .kv .gold{color:var(--gold)}
+.dns-box{display:flex;gap:8px;align-items:stretch;margin:6px 0 16px}
+.dns-box code{flex:1;border:1px solid var(--info);background:var(--bg);color:var(--info);padding:10px 12px;word-break:break-all;display:flex;align-items:center;font-size:13px}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:10px 10px 10px 44px;border:1px solid var(--line);background:var(--card2);margin-bottom:8px;font-size:13px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;bottom:0;width:34px;display:flex;align-items:center;justify-content:center;background:var(--gold);color:#000;font-weight:800}
+
+/* ---------- Toast / Zalo ---------- */
+#toasts{position:fixed;top:14px;right:14px;z-index:1200;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 28px);width:360px}
+.toast{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--info);padding:12px 14px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:tin .2s}
+.toast.ok{border-left-color:var(--ok)} .toast.err{border-left-color:var(--err)} .toast.warn{border-left-color:var(--gold)}
+@keyframes tin{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.zalo-fab{position:fixed;bottom:20px;right:20px;z-index:900;display:flex;align-items:center;gap:8px;background:var(--zalo);color:#fff;
+  border:2px solid #fff;padding:9px 14px;font-weight:800;box-shadow:0 6px 20px rgba(0,104,255,.35);text-transform:uppercase;font-size:12px}
+.zalo-fab:hover{background:#0052cc;text-decoration:none;color:#fff}
+.zalo-fab b{display:flex;align-items:center;justify-content:center;width:24px;height:24px;background:#fff;color:var(--zalo);font-size:15px}
+.foot{color:var(--muted);font-size:11px;text-align:center;padding:10px 16px 0}
+</style>
+</head>
+<body>
+
+<!-- ============ AUTH ============ -->
+<div id="authView" class="auth" hidden>
+  <div class="auth-box">
+    <div class="brand">HEY<span>LOCKET</span></div>
+    <div class="brand-sub">// Nâng cấp Locket Gold tự động</div>
+
+    <div class="tabs-mini" id="authTabs">
+      <button type="button" data-auth="login" class="active">Đăng nhập</button>
+      <button type="button" data-auth="register">Đăng ký</button>
+      <button type="button" data-auth="forgot">Quên MK</button>
+    </div>
+
+    <form id="formLogin" autocomplete="on" novalidate>
+      <label class="lbl" for="liUser">Tên đăng nhập</label>
+      <input type="text" id="liUser" name="username" autocomplete="username" placeholder="username">
+      <label class="lbl" for="liPass">Mật khẩu</label>
+      <input type="password" id="liPass" name="password" autocomplete="current-password" placeholder="••••••••">
+      <label class="check"><input type="checkbox" id="liRemember"> Ghi nhớ đăng nhập</label>
+      <div class="msg" id="msgLogin"></div>
+      <button class="btn btn-block" type="submit" style="margin-top:16px">Đăng nhập</button>
+      <div class="links"><a data-auth-go="forgot">Quên mật khẩu?</a><a data-auth-go="register">Chưa có tài khoản? Đăng ký</a></div>
+    </form>
+
+    <form id="formRegister" autocomplete="off" novalidate hidden>
+      <label class="lbl" for="rgUser">Tên đăng nhập</label>
+      <input type="text" id="rgUser" placeholder="3-20 ký tự: chữ, số, _">
+      <label class="lbl" for="rgEmail">Email (dùng để khôi phục mật khẩu)</label>
+      <input type="email" id="rgEmail" placeholder="ban@gmail.com">
+      <label class="lbl" for="rgPass">Mật khẩu</label>
+      <input type="password" id="rgPass" placeholder="Tối thiểu 4 ký tự">
+      <label class="lbl" for="rgPass2">Nhập lại mật khẩu</label>
+      <input type="password" id="rgPass2" placeholder="Nhập lại mật khẩu">
+      <div class="msg" id="msgRegister"></div>
+      <button class="btn btn-block" type="submit" style="margin-top:16px">Tạo tài khoản</button>
+      <div class="links"><a data-auth-go="login">← Quay lại đăng nhập</a></div>
+    </form>
+
+    <form id="formForgot" autocomplete="off" novalidate hidden>
+      <label class="lbl" for="fgUser">Tên đăng nhập</label>
+      <input type="text" id="fgUser" placeholder="username">
+      <label class="lbl" for="fgEmail">Email đã đăng ký</label>
+      <input type="email" id="fgEmail" placeholder="ban@gmail.com">
+      <label class="lbl" for="fgPass">Mật khẩu mới</label>
+      <input type="password" id="fgPass" placeholder="Tối thiểu 4 ký tự">
+      <label class="lbl" for="fgPass2">Nhập lại mật khẩu mới</label>
+      <input type="password" id="fgPass2" placeholder="Nhập lại mật khẩu mới">
+      <div class="msg" id="msgForgot"></div>
+      <button class="btn btn-block" type="submit" style="margin-top:16px">Đặt lại mật khẩu</button>
+      <div class="links"><a data-auth-go="login">← Quay lại đăng nhập</a></div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="appView" hidden>
+  <header class="hdr">
+    <div class="hdr-in">
+      <div class="brand">HEY<span>LOCKET</span></div>
+      <div class="hdr-r">
+        <div class="coin-badge" id="coinBadge" title="Số dư Coin">◈ <span id="coinValue">0</span> COIN</div>
+        <div class="user-chip" id="userChip"></div>
+        <button class="btn btn-ghost btn-sm" id="btnLogout" type="button">Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+  <nav class="nav"><div class="nav-in" id="nav"></div></nav>
+
+  <main class="wrap">
+    <!-- TAB 1: NÂNG CẤP -->
+    <section id="tab-upgrade" data-tab>
+      <div class="card">
+        <h2>✦ Đặc quyền Locket Gold</h2>
+        <div class="perks">
+          <div class="perk"><i>🎥</i><span>Quay video 30 giây kèm âm thanh</span></div>
+          <div class="perk"><i>📁</i><span>Đăng video từ thư viện 8 giây kèm âm thanh</span></div>
+          <div class="perk"><i>🔒</i><span>Hỗ trợ đăng riêng tư</span></div>
+          <div class="perk"><i>✨</i><span>Sử dụng đầy đủ mọi tính năng Gold của Locket</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🔎 Tra cứu Profile Locket</h2>
+        <label class="lbl" for="locketInput" style="margin-top:0">Link, @username hoặc UID</label>
+        <div class="row" style="flex-wrap:nowrap">
+          <input type="text" id="locketInput" placeholder="https://locket.cam/username  |  locket.cam/username  |  @username  |  UID" autocomplete="off" spellcheck="false">
+          <button class="btn" id="btnLookup" type="button" style="white-space:nowrap">Tra cứu</button>
+        </div>
+        <div class="profile-view" id="profileView"></div>
+        <div class="row mt">
+          <button class="btn btn-ghost btn-sm" id="btnTestNone" type="button">Test Chưa Có Gold</button>
+          <button class="btn btn-info btn-sm" id="btnTestGold" type="button">Test Đã Có Gold VIP</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>⚡ Chọn gói &amp; kích hoạt</h2>
+        <div class="pkgs" id="pkgList"></div>
+        <div class="buy-sum" id="buySummary"></div>
+        <div class="row mt">
+          <button class="btn" id="btnActivate" type="button">⚡ Kích Hoạt</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: ĐƠN HÀNG -->
+    <section id="tab-orders" data-tab hidden>
+      <div class="card"><h2>📦 Đơn hàng của bạn</h2><div id="ordersList"></div></div>
+    </section>
+
+    <!-- TAB 3: NẠP COIN -->
+    <section id="tab-topup" data-tab hidden>
+      <div class="grid2">
+        <div class="card">
+          <h2>💳 Nạp Coin qua MBBank</h2>
+          <div class="rate">TỶ GIÁ: 1.000đ = 1 Coin</div>
+          <label class="lbl" style="margin-top:0">Chọn mệnh giá</label>
+          <div class="amounts" id="amounts"></div>
+          <div class="row mt">
+            <button class="btn btn-info" id="btnNewCode" type="button">🔄 Đổi Mã CK Khác</button>
+          </div>
+          <div class="hint">Quét mã QR bằng app ngân hàng bất kỳ. Số tiền và nội dung đã được điền sẵn, giữ nguyên nội dung chuyển khoản.</div>
+          <div class="msg ok" style="display:block;color:var(--text);border-color:var(--line);background:var(--card2)">
+            Coin được cộng sau khi admin xác nhận giao dịch. Chuyển khoản xong, bấm <b>Gửi bill qua Zalo</b> để được xử lý nhanh.
+          </div>
+        </div>
+        <div class="card">
+          <h2>▣ Mã VietQR</h2>
+          <div class="qr-box" id="qrBox"></div>
+          <div id="topupInfo" style="margin-top:12px"></div>
+          <div class="row mt">
+            <a class="btn btn-zalo btn-sm" href="https://zalo.me/84372858433" target="_blank" rel="noopener noreferrer">💬 Gửi Bill Qua Zalo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: CÀI ĐẶT -->
+    <section id="tab-settings" data-tab hidden>
+      <div class="grid2">
+        <div class="card">
+          <h2>⚙️ Thông tin tài khoản</h2>
+          <table class="kv" id="accInfo"></table>
+        </div>
+        <div class="card">
+          <h2>🔑 Đổi mật khẩu</h2>
+          <form id="formPass" autocomplete="off" novalidate>
+            <label class="lbl" for="pwOld" style="margin-top:0">Mật khẩu hiện tại</label>
+            <input type="password" id="pwOld" autocomplete="current-password">
+            <label class="lbl" for="pwNew">Mật khẩu mới</label>
+            <input type="password" id="pwNew" autocomplete="new-password" placeholder="Tối thiểu 4 ký tự">
+            <label class="lbl" for="pwNew2">Nhập lại mật khẩu mới</label>
+            <input type="password" id="pwNew2" autocomplete="new-password">
+            <div class="msg" id="msgPass"></div>
+            <button class="btn" type="submit" style="margin-top:16px">Cập nhật mật khẩu</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: ADMIN -->
+    <section id="tab-admin" data-tab hidden>
+      <div class="card">
+        <h2>💰 Bảng giá các gói (Coin)</h2>
+        <form id="formPrices" novalidate>
+          <div class="pricegrid" id="priceFields"></div>
+          <div class="msg" id="msgPrices"></div>
+          <button class="btn" type="submit" style="margin-top:16px">Lưu Bảng Giá</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>🔌 Cấu hình API đối tác</h2>
+        <form id="formApi" novalidate autocomplete="off">
+          <label class="lbl" for="apiEndpoint" style="margin-top:0">URL Endpoint</label>
+          <input type="text" id="apiEndpoint" placeholder="https://api.doitac.com/v1/activate" autocomplete="off">
+          <label class="lbl" for="apiKey">API Key</label>
+          <input type="password" id="apiKey" autocomplete="off">
+          <label class="lbl" for="apiToken">Bearer Token</label>
+          <input type="password" id="apiToken" autocomplete="off">
+          <label class="check"><input type="checkbox" id="apiShow"> Hiện key / token</label>
+          <div class="msg" id="msgApi"></div>
+          <button class="btn" type="submit" style="margin-top:16px">Lưu Cài Đặt API</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>👥 Quản trị số dư thành viên</h2>
+        <div class="tbl-wrap"><table class="tbl"><thead><tr>
+          <th>Username</th><th>Email</th><th>Số Coin</th><th>Quyền</th><th>Thao tác</th>
+        </tr></thead><tbody id="userRows"></tbody></table></div>
+      </div>
+    </section>
+    <div class="foot">HeyLocket &copy; <span id="yr"></span> · Dữ liệu lưu cục bộ trên trình duyệt (localStorage)</div>
+  </main>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toasts" aria-live="polite"></div>
+<a class="zalo-fab" href="https://zalo.me/g/aqlxqc883" target="_blank" rel="noopener noreferrer" title="Nhóm hỗ trợ Zalo"><b>Z</b> Hỗ trợ Zalo</a>
+
+<script>
+(() => {
+'use strict';
+
+/* =====================================================================
+ * UTILS
+ * ===================================================================== */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtNum = n => Number(n).toLocaleString('vi-VN');
+const pad = n => String(n).padStart(2, '0');
+const fmtDateTime = ts => {
+  const d = new Date(ts);
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};
+const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const DAY = 86400000;
+const MAX_COIN = 1e12;
+const ZALO_ADMIN = 'https://zalo.me/84372858433';
+const DNS_URL = 'https://doh.2707226.xyz/cuonglocketgold';
+
+function toast(msg, type = 'info', ms = 3800) {
+  const box = $('#toasts'); if (!box) return;
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => el.remove(), ms);
+}
+function handleErr() { toast('Đã xảy ra lỗi, vui lòng thử lại.', 'err'); }
+function safe(fn) {
+  try {
+    const r = fn();
+    if (r && typeof r.catch === 'function') r.catch(handleErr);
+    return r;
+  } catch (e) { handleErr(e); }
+}
+function setMsg(sel, text, type) {
+  const el = $(sel); if (!el) return;
+  el.textContent = text || '';
+  el.className = 'msg' + (type ? ' ' + type : '');
+}
+async function copyText(t) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(t); return true; }
+  } catch (e) { /* fallback below */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = t; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  } catch (e) { return false; }
+}
+
+/* =====================================================================
+ * STORE (localStorage: app_db_v1)
+ * ===================================================================== */
+const DB_KEY = 'app_db_v1';
+const SESSION_KEY = 'app_session_v1';
+
+const PACKAGES = [
+  { key: '1d',   name: 'Gói 1 Ngày',    days: 1,    label: 'Hạn 1 ngày' },
+  { key: '6m',   name: 'Gói 6 Tháng',   days: 180,  label: 'Hạn 180 ngày' },
+  { key: '1y',   name: 'Gói 1 Năm',     days: 365,  label: 'Hạn 365 ngày' },
+  { key: 'life', name: 'Gói Vĩnh Viễn', days: null, label: 'Hạn vĩnh viễn' }
+];
+const pkgByKey = k => PACKAGES.find(p => p.key === k);
+
+const defaultDB = () => ({
+  users: [
+    { username: 'admin',  password: '112', role: 'admin', coins: 999999, email: 'admin@locketgold.com' },
+    { username: 'khach1', password: '123', role: 'user',  coins: 200,    email: 'khach1@gmail.com' }
+  ],
+  prices: { '1d': 3, '6m': 39, '1y': 99, life: 199 },
+  orders: [],
+  settings: { api_endpoint: '', api_key: '', api_token: '' }
+});
+
+function normalizeDB(p) {
+  const d = defaultDB();
+  const out = {
+    users: Array.isArray(p && p.users) && p.users.length ? p.users : d.users,
+    prices: Object.assign({}, d.prices, (p && p.prices) || {}),
+    orders: Array.isArray(p && p.orders) ? p.orders : [],
+    settings: Object.assign({}, d.settings, (p && p.settings) || {})
+  };
+  out.users = out.users.filter(u => u && typeof u.username === 'string').map(u => ({
+    username: u.username, password: String(u.password ?? ''), role: u.role === 'admin' ? 'admin' : 'user',
+    coins: Math.max(0, Math.floor(Number(u.coins) || 0)), email: String(u.email || '')
+  }));
+  PACKAGES.forEach(pk => {
+    const v = Number(out.prices[pk.key]);
+    out.prices[pk.key] = Number.isFinite(v) && v > 0 ? Math.floor(v) : d.prices[pk.key];
+  });
+  return out;
+}
+
+let appDB;
+function persist(db) {
+  try { localStorage.setItem(DB_KEY, JSON.stringify(db)); return true; }
+  catch (e) { return false; }
+}
+function loadDB() {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (raw) return normalizeDB(JSON.parse(raw));
+  } catch (e) { /* corrupted -> reset below */ }
+  const d = defaultDB();
+  persist(d);
+  return d;
+}
+
+let currentUsername = null;
+const getUser = name => appDB.users.find(u => u.username.toLowerCase() === String(name || '').toLowerCase()) || null;
+const me = () => getUser(currentUsername);
+
+function commit() {
+  if (!persist(appDB)) toast('Không thể lưu dữ liệu (trình duyệt chặn localStorage).', 'err');
+  updateBadge();
+}
+
+/* Orders helpers */
+function orderStatus(o) {
+  if (o.expire_time === null || o.expire_time === undefined) return 'active';
+  return Date.now() > o.expire_time ? 'expired' : 'active';
+}
+function getGoldInfo(locketUser) {
+  const u = String(locketUser).toLowerCase();
+  const list = appDB.orders.filter(o => String(o.locket_user).toLowerCase() === u && orderStatus(o) === 'active');
+  if (!list.length) return null;
+  const life = list.find(o => o.expire_time === null || o.expire_time === undefined);
+  if (life) return { expire: null, order: life };
+  list.sort((a, b) => b.expire_time - a.expire_time);
+  return { expire: list[0].expire_time, order: list[0] };
+}
+function newOrderId() {
+  let id;
+  do { id = '#LK' + randInt(100000, 999999); } while (appDB.orders.some(o => o.id === id));
+  return id;
+}
+
+/* =====================================================================
+ * MODAL
+ * ===================================================================== */
+const Modal = (() => {
+  let root = null, onKey = null;
+  function close() {
+    if (!root) root = $('#modalRoot');
+    root.innerHTML = '';
+    document.body.classList.remove('modal-open');
+    if (onKey) { document.removeEventListener('keydown', onKey); onKey = null; }
+  }
+  function open({ title, html, buttons = [], onOpen }) {
+    root = $('#modalRoot');
+    close();
+    root.innerHTML =
+      `<div class="overlay" data-modal-overlay><div class="dialog" role="dialog" aria-modal="true" aria-label="${esc(title)}">` +
+      `<div class="dlg-head"><h3>${esc(title)}</h3><button type="button" class="x" data-modal-close aria-label="Đóng">✕</button></div>` +
+      `<div class="dlg-body">${html}</div><div class="dlg-foot"></div></div></div>`;
+    const foot = $('.dlg-foot', root);
+    buttons.forEach(b => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn ' + (b.cls || '');
+      btn.textContent = b.label;
+      if (b.id) btn.id = b.id;
+      if (b.disabled) btn.disabled = true;
+      btn.addEventListener('click', () => safe(() => (b.onClick ? b.onClick(btn) : close())));
+      foot.appendChild(btn);
+    });
+    if (!buttons.length) foot.remove();
+    $('[data-modal-close]', root).addEventListener('click', close);
+    $('[data-modal-overlay]', root).addEventListener('mousedown', e => {
+      if (e.target.hasAttribute('data-modal-overlay')) close();
+    });
+    onKey = e => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('modal-open');
+    if (onOpen) safe(() => onOpen(root));
+  }
+  return { open, close };
+})();
+
+/* =====================================================================
+ * AUTH
+ * ===================================================================== */
+const Auth = {
+  getSessionUser() {
+    let n = null;
+    try { n = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY); } catch (e) { n = null; }
+    const u = n ? getUser(n) : null;
+    return u ? u.username : null;
+  },
+  saveSession(username, remember) {
+    try {
+      localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY);
+      (remember ? localStorage : sessionStorage).setItem(SESSION_KEY, username);
+    } catch (e) { /* storage blocked: session lives in memory only */ }
+  },
+  clearSession() {
+    try { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); } catch (e) { /* ignore */ }
+  },
+  switchTab(name) {
+    $$('#authTabs button').forEach(b => b.classList.toggle('active', b.dataset.auth === name));
+    $('#formLogin').hidden = name !== 'login';
+    $('#formRegister').hidden = name !== 'register';
+    $('#formForgot').hidden = name !== 'forgot';
+    ['#msgLogin', '#msgRegister', '#msgForgot'].forEach(s => setMsg(s, ''));
+  },
+  login(e) {
+    e.preventDefault();
+    const name = $('#liUser').value.trim();
+    const pass = $('#liPass').value;
+    if (!name || !pass) return setMsg('#msgLogin', 'Vui lòng nhập tên đăng nhập và mật khẩu.', 'err');
+    const u = getUser(name);
+    if (!u || u.password !== pass) return setMsg('#msgLogin', 'Sai tên đăng nhập hoặc mật khẩu.', 'err');
+    Auth.saveSession(u.username, $('#liRemember').checked);
+    $('#liPass').value = '';
+    App.enter(u.username);
+  },
+  register(e) {
+    e.preventDefault();
+    const name = $('#rgUser').value.trim();
+    const email = $('#rgEmail').value.trim();
+    const p1 = $('#rgPass').value, p2 = $('#rgPass2').value;
+    if (!/^[A-Za-z0-9_]{3,20}$/.test(name)) return setMsg('#msgRegister', 'Tên đăng nhập 3-20 ký tự, chỉ gồm chữ, số và dấu _.', 'err');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return setMsg('#msgRegister', 'Email không hợp lệ (bắt buộc để khôi phục mật khẩu).', 'err');
+    if (p1.length < 4) return setMsg('#msgRegister', 'Mật khẩu tối thiểu 4 ký tự.', 'err');
+    if (p1 !== p2) return setMsg('#msgRegister', 'Hai mật khẩu không khớp.', 'err');
+    if (getUser(name)) return setMsg('#msgRegister', 'Tên đăng nhập đã tồn tại.', 'err');
+    appDB.users.push({ username: name, password: p1, role: 'user', coins: 0, email });
+    if (!persist(appDB)) { appDB.users.pop(); return setMsg('#msgRegister', 'Không thể lưu dữ liệu trên trình duyệt này.', 'err'); }
+    $('#formRegister').reset();
+    Auth.switchTab('login');
+    $('#liUser').value = name;
+    setMsg('#msgLogin', 'Đăng ký thành công! Hãy đăng nhập.', 'ok');
+    $('#liPass').focus();
+  },
+  forgot(e) {
+    e.preventDefault();
+    const name = $('#fgUser').value.trim();
+    const email = $('#fgEmail').value.trim().toLowerCase();
+    const p1 = $('#fgPass').value, p2 = $('#fgPass2').value;
+    if (!name || !email) return setMsg('#msgForgot', 'Vui lòng nhập tên đăng nhập và email.', 'err');
+    if (p1.length < 4) return setMsg('#msgForgot', 'Mật khẩu mới tối thiểu 4 ký tự.', 'err');
+    if (p1 !== p2) return setMsg('#msgForgot', 'Hai mật khẩu không khớp.', 'err');
+    const u = getUser(name);
+    if (!u || u.role === 'admin' || u.email.toLowerCase() !== email) {
+      return setMsg('#msgForgot', 'Thông tin tên đăng nhập / email không khớp.', 'err');
+    }
+    u.password = p1;
+    if (!persist(appDB)) return setMsg('#msgForgot', 'Không thể lưu dữ liệu trên trình duyệt này.', 'err');
+    $('#formForgot').reset();
+    Auth.switchTab('login');
+    $('#liUser').value = u.username;
+    setMsg('#msgLogin', 'Đã đặt lại mật khẩu. Hãy đăng nhập bằng mật khẩu mới.', 'ok');
+  },
+  logout() {
+    Auth.clearSession();
+    currentUsername = null;
+    Modal.close();
+    App.showAuth();
+  }
+};
+
+/* =====================================================================
+ * HEADER / NAV
+ * ===================================================================== */
+function updateBadge() {
+  const u = me(); if (!u) return;
+  const el = $('#coinValue'); if (!el) return;
+  const nv = fmtNum(u.coins);
+  const changed = el.textContent !== nv;
+  el.textContent = nv;
+  if (changed) {
+    const b = $('#coinBadge');
+    b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+  }
+  refreshBuySummary();
+}
+function renderHeader() {
+  const u = me(); if (!u) return;
+  $('#userChip').innerHTML = `<b>${esc(u.username)}</b><span class="role-tag ${u.role === 'admin' ? 'admin' : ''}">${esc(u.role)}</span>`;
+  updateBadge();
+}
+const TABS = [
+  { id: 'upgrade',  label: '⚡ Nâng Cấp' },
+  { id: 'orders',   label: '📦 Đơn Hàng' },
+  { id: 'topup',    label: '💳 Nạp Coin' },
+  { id: 'settings', label: '⚙️ Cài Đặt' },
+  { id: 'admin',    label: '👑 Quản Trị & API', admin: true }
+];
+let activeTab = 'upgrade';
+function buildNav() {
+  const u = me(); if (!u) return;
+  const tabs = TABS.filter(t => !t.admin || u.role === 'admin');
+  $('#nav').innerHTML = tabs.map(t => `<button type="button" data-tab-btn="${t.id}">${esc(t.label)}</button>`).join('');
+}
+function switchTab(id, opts = {}) {
+  const u = me(); if (!u) return;
+  if (id === 'admin' && u.role !== 'admin') id = 'upgrade';
+  activeTab = id;
+  $$('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tabBtn === id));
+  $$('[data-tab]').forEach(s => { s.hidden = s.id !== 'tab-' + id; });
+  if (id === 'orders') Orders.render(opts.highlight);
+  if (id === 'topup') Topup.render();
+  if (id === 'settings') Settings.render();
+  if (id === 'admin') Admin.render();
+  window.scrollTo({ top: 0 });
+}
+
+/* =====================================================================
+ * LOCKET PROFILE LOOKUP
+ * ===================================================================== */
+function extractLocketUsername(raw) {
+  let s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^https?:\/\//i.test(s) || /^(?:www\.)?locket\.cam(?:[\/?#]|$)/i.test(s)) {
+    const m = /^(?:https?:\/\/)?(?:www\.)?([^\/?#\s]+)([^?#]*)/i.exec(s);
+    if (!m || m[1].toLowerCase() !== 'locket.cam') return '';
+    s = m[2].replace(/^\/+/, '').split('/')[0];
+  } else {
+    s = s.split(/[\/?#]/)[0];
+  }
+  s = s.replace(/^@+/, '').trim();
+  return /^[A-Za-z0-9_.\-]{2,64}$/.test(s) ? s : '';
+}
+async function fetchWithTimeout(url, ms = 9000) {
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), ms);
+  try { return await fetch(url, { signal: c.signal }); }
+  finally { clearTimeout(t); }
+}
+async function fetchAvatar(username) {
+  const target = 'https://locket.cam/' + encodeURIComponent(username);
+  const res = await fetchWithTimeout('https://api.allorigins.win/raw?url=' + encodeURIComponent(target));
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const html = await res.text();
+  const m = html.match(/<meta[^>]+(?:property|name)=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+            html.match(/<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["']og:image["']/i);
+  if (!m) throw new Error('og:image not found');
+  let url = m[1].replace(/&amp;/g, '&').trim();
+  if (url.startsWith('//')) url = 'https:' + url;
+  if (!/^https?:\/\//i.test(url)) throw new Error('bad image url');
+  const fallback = 'https://images.weserv.nl/?url=' + encodeURIComponent(url.replace(/^https?:\/\//i, '')) + '&w=240&h=240&fit=cover&output=jpg';
+  return { url, fallback };
+}
+
+const Locket = {
+  seq: 0,
+  profile: null, // {username, avatar, fallback, loading, avatarError, mode: 'real'|'test-none'|'test-gold'}
+  async lookup() {
+    const u = extractLocketUsername($('#locketInput').value);
+    if (!u) { toast('ID / link Locket không hợp lệ.', 'err'); $('#locketInput').focus(); return; }
+    const seq = ++Locket.seq;
+    Locket.profile = { username: u, avatar: null, fallback: null, loading: true, avatarError: false, mode: 'real' };
+    Locket.render();
+    try {
+      const av = await fetchAvatar(u);
+      if (seq !== Locket.seq) return;
+      Locket.profile.avatar = av.url;
+      Locket.profile.fallback = av.fallback;
+    } catch (e) {
+      if (seq !== Locket.seq) return;
+      Locket.profile.avatarError = true;
+    }
+    Locket.profile.loading = false;
+    Locket.render();
+  },
+  setTest(mode) {
+    const typed = extractLocketUsername($('#locketInput').value);
+    if (!Locket.profile) {
+      Locket.profile = { username: typed || 'demo_user', avatar: null, fallback: null, loading: false, avatarError: false, mode };
+    } else {
+      Locket.profile.mode = mode;
+    }
+    Locket.render();
+  },
+  resolveGold(p) {
+    if (p.mode === 'test-none') return { gold: false, test: true };
+    if (p.mode === 'test-gold') return { gold: true, expire: Date.now() + 30 * DAY, test: true };
+    const info = getGoldInfo(p.username);
+    if (info) return { gold: true, expire: info.expire };
+    const past = appDB.orders.filter(o => String(o.locket_user).toLowerCase() === p.username.toLowerCase() && o.expire_time)
+      .sort((a, b) => b.expire_time - a.expire_time)[0];
+    return { gold: false, lastExpired: past ? past.expire_time : null };
+  },
+  buildAvatar(p, gold) {
+    const wrap = document.createElement('div');
+    wrap.className = 'avatar' + (gold ? ' gold' : '');
+    const ph = document.createElement('span');
+    ph.className = 'avatar-ph';
+    ph.textContent = p.username.replace(/[^A-Za-z0-9]/g, '').charAt(0) || '?';
+    wrap.appendChild(ph);
+    if (p.avatar) {
+      const img = new Image();
+      img.alt = 'Avatar ' + p.username;
+      img.referrerPolicy = 'no-referrer';
+      let triedFallback = false;
+      img.onerror = () => {
+        if (!triedFallback && p.fallback) { triedFallback = true; img.src = p.fallback; }
+        else img.remove();
+      };
+      img.src = p.avatar;
+      wrap.appendChild(img);
+    }
+    return wrap;
+  },
+  render() {
+    const box = $('#profileView'); if (!box) return;
+    const p = Locket.profile;
+    if (!p) { box.innerHTML = '<div class="profile-empty">Nhập link / @username / UID Locket rồi bấm “Tra cứu” để xem avatar và trạng thái Gold.</div>'; return; }
+    const g = Locket.resolveGold(p);
+    const card = document.createElement('div');
+    card.className = 'profile-card';
+    card.appendChild(Locket.buildAvatar(p, g.gold));
+    const info = document.createElement('div');
+    let html = `<div class="p-name">@${esc(p.username)}</div><div style="margin:8px 0">`;
+    html += g.gold ? '<span class="badge gold">● GOLD VIP ACTIVE</span>' : '<span class="badge none">● CHƯA KÍCH HOẠT GOLD</span>';
+    if (g.test) html += ' <span class="badge test">CHẾ ĐỘ TEST</span>';
+    html += '</div>';
+    if (g.gold) {
+      html += `<div style="font-size:13px">Hết hạn: <b style="color:var(--gold)">${g.expire === null || g.expire === undefined ? 'Vĩnh viễn (không hết hạn)' : esc(fmtDateTime(g.expire))}</b></div>`;
+    } else if (g.lastExpired) {
+      html += `<div class="hint" style="margin:0">Gói trước đã hết hạn lúc ${esc(fmtDateTime(g.lastExpired))}.</div>`;
+    }
+    if (p.loading) html += '<div class="hint"><span class="spin"></span>Đang tải avatar…</div>';
+    else if (p.avatarError && p.mode === 'real') html += '<div class="hint">Không tải được avatar (proxy không phản hồi hoặc profile không công khai). Bạn vẫn có thể kích hoạt gói.</div>';
+    info.innerHTML = html;
+    card.appendChild(info);
+    box.innerHTML = '';
+    box.appendChild(card);
+  }
+};
+
+/* =====================================================================
+ * UPGRADE (packages + purchase)
+ * ===================================================================== */
+let selectedPkg = '1d';
+function renderPackages() {
+  const box = $('#pkgList'); if (!box) return;
+  box.innerHTML = PACKAGES.map(p => {
+    const c = appDB.prices[p.key];
+    return `<label class="pkg${p.key === selectedPkg ? ' selected' : ''}" data-pkg="${p.key}">` +
+      `<input type="radio" name="pkg" value="${p.key}"${p.key === selectedPkg ? ' checked' : ''}>` +
+      `<span class="pkg-name">${esc(p.name)}</span><span class="pkg-meta">${esc(p.label)}</span>` +
+      `<span class="pkg-price">${fmtNum(c)} <small>COIN</small></span><span class="pkg-vnd">≈ ${fmtNum(c * 1000)}đ</span></label>`;
+  }).join('');
+  $$('input[name=pkg]', box).forEach(i => i.addEventListener('change', () => {
+    selectedPkg = i.value;
+    $$('.pkg', box).forEach(l => l.classList.toggle('selected', l.dataset.pkg === selectedPkg));
+    refreshBuySummary();
+  }));
+  refreshBuySummary();
+}
+function refreshBuySummary() {
+  const el = $('#buySummary'); const u = me(); if (!el || !u) return;
+  const pk = pkgByKey(selectedPkg); const cost = appDB.prices[selectedPkg];
+  el.innerHTML = `Đã chọn: <b>${esc(pk.name)}</b> · Giá: <b style="color:var(--gold)">${fmtNum(cost)} Coin</b> · Số dư: <b>${fmtNum(u.coins)} Coin</b>` +
+    (u.coins < cost ? ` · <b style="color:var(--err)">Thiếu ${fmtNum(cost - u.coins)} Coin</b>` : '');
+}
+function startPurchase() {
+  const u = me(); if (!u) return;
+  const lk = extractLocketUsername($('#locketInput').value);
+  if (!lk) { toast('Vui lòng nhập ID / link Locket hợp lệ.', 'err'); $('#locketInput').focus(); return; }
+  const pk = pkgByKey(selectedPkg);
+  const gold = getGoldInfo(lk);
+  if (gold && gold.expire === null) { toast('Tài khoản Locket này đã có Gold Vĩnh Viễn.', 'warn'); return; }
+  const cost = appDB.prices[pk.key];
+  const after = u.coins - cost;
+  const enough = after >= 0;
+  const html =
+    `<table class="kv">` +
+    `<tr><td>ID Locket</td><td>@${esc(lk)}</td></tr>` +
+    `<tr><td>Tên gói</td><td>${esc(pk.name)}</td></tr>` +
+    `<tr><td>Coin cần trừ</td><td class="gold">${fmtNum(cost)} Coin</td></tr>` +
+    `<tr><td>Số dư hiện tại</td><td>${fmtNum(u.coins)} Coin</td></tr>` +
+    `<tr><td>Số dư còn lại</td><td class="${enough ? 'pos' : 'neg'}">${enough ? fmtNum(after) + ' Coin' : 'Không đủ Coin (thiếu ' + fmtNum(-after) + ')'}</td></tr>` +
+    `</table>` +
+    (gold ? `<div class="msg ok" style="display:block">Tài khoản này đang có Gold đến ${esc(fmtDateTime(gold.expire))}. Đơn mới sẽ được tính từ thời điểm mua.</div>` : '');
+  const buttons = [{ label: 'Huỷ', cls: 'btn-ghost', onClick: Modal.close }];
+  if (enough) buttons.push({ label: 'Xác nhận kích hoạt', onClick: () => confirmPurchase(lk, pk.key) });
+  else buttons.push({ label: 'Nạp thêm Coin', onClick: () => { Modal.close(); switchTab('topup'); } });
+  Modal.open({ title: 'Xác nhận kích hoạt', html, buttons });
+}
+function confirmPurchase(lk, pkgKey) {
+  const u = me(); if (!u) return;
+  const pk = pkgByKey(pkgKey);
+  const cost = appDB.prices[pkgKey];
+  if (u.coins < cost) { Modal.close(); toast('Số dư không đủ để kích hoạt gói này.', 'err'); return; }
+  const now = Date.now();
+  const order = {
+    id: newOrderId(), username: u.username, locket_user: lk, pkg_key: pk.key, pkg_name: pk.name,
+    coin_cost: cost, buy_time: now, expire_time: pk.days === null ? null : now + pk.days * DAY, status: 'active'
+  };
+  u.coins -= cost;
+  appDB.orders.unshift(order);
+  commit();
+  Modal.close();
+  switchTab('orders', { highlight: order.id });
+  toast(`Kích hoạt thành công! Mã đơn ${order.id}. Hãy xem hướng dẫn DNS để hoàn tất.`, 'ok', 5500);
+  Locket.render();
+}
+
+/* =====================================================================
+ * ORDERS
+ * ===================================================================== */
+const DNS_STEPS = [
+  'Bấm nút “Sao chép” để copy link DNS bên trên.',
+  'Mở <b>Cài đặt</b> trên iPhone → chọn <b>Cài đặt chung</b> → <b>VPN &amp; Quản lý thiết bị</b> (hoặc <b>DNS</b>).',
+  'Thêm cấu hình <b>DNS mã hóa (DNS over HTTPS)</b> → chọn kiểu <b>HTTPS</b> và dán link DNS vừa sao chép vào ô máy chủ.',
+  'Lưu lại, nếu iOS yêu cầu hãy nhập mật mã thiết bị để cho phép cài hồ sơ cấu hình.',
+  'Quay lại <b>Cài đặt → Cài đặt chung → VPN &amp; Quản lý thiết bị → DNS</b>, chọn cấu hình vừa tạo để <b>bật</b> (có dấu ✓).',
+  'Tắt hẳn ứng dụng Locket rồi mở lại, đăng nhập đúng tài khoản đã mua gói và kiểm tra biểu tượng Gold. Cần hỗ trợ hãy gửi bill qua Zalo.'
+];
+const Orders = {
+  render(highlightId) {
+    const box = $('#ordersList'); const u = me(); if (!box || !u) return;
+    const list = appDB.orders.filter(o => o.username === u.username);
+    if (!list.length) {
+      box.innerHTML = '<div class="empty">Bạn chưa có đơn hàng nào.<div class="row mt" style="justify-content:center"><button class="btn btn-sm" type="button" data-action="goto-tab" data-tab-id="upgrade">⚡ Nâng cấp ngay</button></div></div>';
+      return;
+    }
+    box.innerHTML = list.map(o => {
+      const st = orderStatus(o);
+      return `<article class="order${o.id === highlightId ? ' flash' : ''}" data-oid="${esc(o.id)}">` +
+        `<div class="order-head"><span class="oid">${esc(o.id)}</span>` +
+        `<span class="badge ${st === 'active' ? 'ok' : 'bad'}">${st === 'active' ? '● Đang hoạt động' : '● Đã hết hạn'}</span></div>` +
+        `<dl class="kvgrid">` +
+        `<div><dt>ID Locket</dt><dd>@${esc(o.locket_user)}</dd></div>` +
+        `<div><dt>Tên gói</dt><dd>${esc(o.pkg_name)}</dd></div>` +
+        `<div><dt>Coin đã trừ</dt><dd style="color:var(--gold)">${fmtNum(o.coin_cost)} Coin</dd></div>` +
+        `<div><dt>Ngày giờ mua</dt><dd>${esc(fmtDateTime(o.buy_time))}</dd></div>` +
+        `<div><dt>Ngày hết hạn</dt><dd>${o.expire_time ? esc(fmtDateTime(o.expire_time)) : 'Vĩnh viễn'}</dd></div>` +
+        `</dl>` +
+        `<div class="row"><button class="btn btn-info btn-sm" type="button" data-action="dns" data-oid="${esc(o.id)}">Xem Hướng Dẫn DNS</button>` +
+        `<a class="btn btn-zalo btn-sm" href="${ZALO_ADMIN}" target="_blank" rel="noopener noreferrer">💬 Gửi Bill Qua Zalo</a></div></article>`;
+    }).join('');
+    if (highlightId) {
+      const el = $(`[data-oid="${CSS.escape(highlightId)}"]`, box);
+      if (el) el.scrollIntoView({ block: 'center' });
+    }
+  },
+  showDNS(oid) {
+    const o = appDB.orders.find(x => x.id === oid);
+    const html =
+      (o ? `<div class="hint" style="margin:0 0 12px">Đơn <b style="color:var(--gold)">${esc(o.id)}</b> · Locket <b>@${esc(o.locket_user)}</b></div>` : '') +
+      `<label class="lbl" style="margin-top:0">Link DNS</label>` +
+      `<div class="dns-box"><code>${esc(DNS_URL)}</code><button type="button" class="btn btn-sm" data-copy="${esc(DNS_URL)}">Sao chép</button></div>` +
+      `<label class="lbl" style="margin-top:0">Cài đặt trên iOS (6 bước)</label>` +
+      `<ol class="steps">${DNS_STEPS.map(s => `<li>${s}</li>`).join('')}</ol>`;
+    Modal.open({
+      title: 'Hướng dẫn cấu hình DNS', html,
+      buttons: [
+        { label: 'Đóng', cls: 'btn-ghost', onClick: Modal.close },
+        { label: '💬 Gửi Bill Qua Zalo', cls: 'btn-zalo', onClick: () => window.open(ZALO_ADMIN, '_blank', 'noopener,noreferrer') }
+      ]
+    });
+  }
+};
+
+/* =====================================================================
+ * TOPUP (VietQR)
+ * ===================================================================== */
+const BANK = { id: 'MB', name: 'MBBank', acc: '77026062008', holder: 'LE CHI CUONG' };
+const AMOUNTS = [50000, 100000, 150000, 200000, 300000, 500000];
+const Topup = {
+  amount: 50000,
+  code: randInt(1000, 9999),
+  content() {
+    const u = me();
+    const name = (u ? u.username : 'USER').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 20) || 'USER';
+    return `NAPCOIN ${name}${Topup.code}`;
+  },
+  qrUrl() {
+    return `https://img.vietqr.io/image/${BANK.id}-${BANK.acc}-compact2.png?amount=${Topup.amount}` +
+      `&addInfo=${encodeURIComponent(Topup.content())}&accountName=${encodeURIComponent(BANK.holder)}`;
+  },
+  render() {
+    $('#amounts').innerHTML = AMOUNTS.map(a =>
+      `<button type="button" class="amt${a === Topup.amount ? ' selected' : ''}" data-action="amount" data-amount="${a}">${fmtNum(a / 1000)}k<small>= ${fmtNum(a / 1000)} Coin</small></button>`).join('');
+    Topup.renderQR();
+  },
+  renderQR() {
+    const box = $('#qrBox');
+    box.innerHTML = '';
+    const img = new Image();
+    img.alt = 'Mã VietQR nạp Coin';
+    img.addEventListener('error', () => {
+      box.innerHTML = '<div class="qr-err">Không tải được mã QR. Hãy chuyển khoản thủ công theo thông tin bên dưới.</div>';
+    });
+    img.src = Topup.qrUrl();
+    box.appendChild(img);
+    const rows = [
+      ['Ngân hàng', BANK.name, null],
+      ['Số tài khoản', BANK.acc, BANK.acc],
+      ['Chủ tài khoản', BANK.holder, null],
+      ['Số tiền', fmtNum(Topup.amount) + 'đ', String(Topup.amount)],
+      ['Nội dung CK', Topup.content(), Topup.content()]
+    ];
+    $('#topupInfo').innerHTML = rows.map(r =>
+      `<div class="info-line"><span>${esc(r[0])}</span><span class="val">${esc(r[1])}` +
+      (r[2] ? ` <button type="button" class="btn btn-ghost btn-sm" data-copy="${esc(r[2])}">Chép</button>` : '') + `</span></div>`).join('');
+  },
+  setAmount(a) {
+    if (!AMOUNTS.includes(a)) return;
+    Topup.amount = a;
+    $$('#amounts .amt').forEach(b => b.classList.toggle('selected', Number(b.dataset.amount) === a));
+    Topup.renderQR();
+  },
+  newCode() {
+    let c;
+    do { c = randInt(1000, 9999); } while (c === Topup.code);
+    Topup.code = c;
+    Topup.renderQR();
+    toast('Đã tạo mã chuyển khoản mới: ' + Topup.content(), 'ok');
+  }
+};
+
+/* =====================================================================
+ * SETTINGS
+ * ===================================================================== */
+const Settings = {
+  render() {
+    const u = me(); if (!u) return;
+    $('#accInfo').innerHTML =
+      `<tr><td>Username</td><td>${esc(u.username)}</td></tr>` +
+      `<tr><td>Email</td><td>${esc(u.email || '—')}</td></tr>` +
+      `<tr><td>Số dư</td><td class="gold">${fmtNum(u.coins)} Coin</td></tr>` +
+      `<tr><td>Quyền</td><td>${esc(u.role)}</td></tr>`;
+    $('#formPass').reset();
+    setMsg('#msgPass', '');
+  },
+  changePass(e) {
+    e.preventDefault();
+    const u = me(); if (!u) return;
+    const o = $('#pwOld').value, n = $('#pwNew').value, n2 = $('#pwNew2').value;
+    if (o !== u.password) return setMsg('#msgPass', 'Mật khẩu hiện tại không đúng.', 'err');
+    if (n.length < 4) return setMsg('#msgPass', 'Mật khẩu mới tối thiểu 4 ký tự.', 'err');
+    if (n === o) return setMsg('#msgPass', 'Mật khẩu mới phải khác mật khẩu hiện tại.', 'err');
+    if (n !== n2) return setMsg('#msgPass', 'Hai mật khẩu mới không khớp.', 'err');
+    u.password = n;
+    if (!persist(appDB)) return setMsg('#msgPass', 'Không thể lưu dữ liệu trên trình duyệt này.', 'err');
+    $('#formPass').reset();
+    setMsg('#msgPass', 'Đổi mật khẩu thành công.', 'ok');
+    toast('Đã cập nhật mật khẩu.', 'ok');
+  }
+};
+
+/* =====================================================================
+ * ADMIN
+ * ===================================================================== */
+function requireAdmin() {
+  const u = me();
+  if (!u || u.role !== 'admin') { toast('Bạn không có quyền thực hiện thao tác này.', 'err'); return false; }
+  return true;
+}
+const Admin = {
+  render() {
+    if (!requireAdmin()) return;
+    $('#priceFields').innerHTML = PACKAGES.map(p =>
+      `<div><label class="lbl" for="price_${p.key}">${esc(p.name)} (Coin)</label>` +
+      `<input type="number" id="price_${p.key}" min="1" step="1" value="${appDB.prices[p.key]}"></div>`).join('');
+    const s = appDB.settings;
+    $('#apiEndpoint').value = s.api_endpoint || '';
+    $('#apiKey').value = s.api_key || '';
+    $('#apiToken').value = s.api_token || '';
+    $('#apiShow').checked = false; Admin.toggleSecret(false);
+    setMsg('#msgPrices', ''); setMsg('#msgApi', '');
+    Admin.renderUsers();
+  },
+  savePrices(e) {
+    e.preventDefault();
+    if (!requireAdmin()) return;
+    const next = {};
+    for (const p of PACKAGES) {
+      const raw = $('#price_' + p.key).value.trim();
+      const v = Number(raw);
+      if (raw === '' || !Number.isInteger(v) || v < 1 || v > 1e9) return setMsg('#msgPrices', `Giá của ${p.name} phải là số nguyên từ 1 trở lên.`, 'err');
+      next[p.key] = v;
+    }
+    appDB.prices = next;
+    commit();
+    renderPackages();
+    setMsg('#msgPrices', 'Đã lưu bảng giá. Form nâng cấp đã được cập nhật.', 'ok');
+    toast('Đã lưu bảng giá.', 'ok');
+  },
+  saveApi(e) {
+    e.preventDefault();
+    if (!requireAdmin()) return;
+    const ep = $('#apiEndpoint').value.trim();
+    if (ep && !/^https?:\/\/[^\s]+$/i.test(ep)) return setMsg('#msgApi', 'URL Endpoint phải bắt đầu bằng http:// hoặc https://', 'err');
+    appDB.settings = { api_endpoint: ep, api_key: $('#apiKey').value.trim(), api_token: $('#apiToken').value.trim() };
+    commit();
+    setMsg('#msgApi', 'Đã lưu cấu hình API.', 'ok');
+    toast('Đã lưu cấu hình API.', 'ok');
+  },
+  toggleSecret(show) {
+    $('#apiKey').type = show ? 'text' : 'password';
+    $('#apiToken').type = show ? 'text' : 'password';
+  },
+  renderUsers() {
+    const body = $('#userRows'); if (!body) return;
+    body.innerHTML = appDB.users.map(u =>
+      `<tr><td><b>${esc(u.username)}</b></td><td>${esc(u.email || '—')}</td><td class="num">${fmtNum(u.coins)}</td>` +
+      `<td><span class="badge ${u.role === 'admin' ? 'gold' : 'none'}">${esc(u.role)}</span></td>` +
+      `<td><div class="acts">` +
+      `<button type="button" class="btn btn-sm" title="Cộng Coin" data-action="coin-add" data-user="${esc(u.username)}">+</button>` +
+      `<button type="button" class="btn btn-danger btn-sm" title="Trừ Coin" data-action="coin-sub" data-user="${esc(u.username)}">-</button>` +
+      `<button type="button" class="btn btn-info btn-sm" title="Đặt lại số dư" data-action="coin-set" data-user="${esc(u.username)}">SỬA</button>` +
+      `</div></td></tr>`).join('');
+  },
+  openCoinModal(mode, username) {
+    if (!requireAdmin()) return;
+    const target = getUser(username); if (!target) return;
+    const titles = { add: 'Cộng Coin', sub: 'Trừ Coin', set: 'Đặt lại số dư (Sửa)' };
+    const labels = { add: 'Số Coin muốn cộng thêm', sub: 'Số Coin muốn trừ', set: 'Số dư mới' };
+    const html =
+      `<table class="kv"><tr><td>Thành viên</td><td>${esc(target.username)}</td></tr>` +
+      `<tr><td>Số dư hiện tại</td><td class="gold">${fmtNum(target.coins)} Coin</td></tr></table>` +
+      `<label class="lbl" for="coinAmt">${labels[mode]}</label>` +
+      `<input type="number" id="coinAmt" step="1" min="${mode === 'set' ? 0 : 1}"${mode === 'sub' ? ` max="${target.coins}"` : ''} placeholder="Nhập số nguyên">` +
+      `<div class="hint" id="coinPreview"></div><div class="msg" id="msgCoin"></div>`;
+    const compute = () => {
+      const raw = $('#coinAmt').value.trim();
+      const v = Number(raw);
+      const cur = getUser(username);
+      let err = '', next = null;
+      if (raw === '' || !Number.isFinite(v)) err = '';
+      else if (!Number.isInteger(v)) err = 'Vui lòng nhập số nguyên.';
+      else if (mode === 'add' && (v < 1 || cur.coins + v > MAX_COIN)) err = 'Số Coin cộng không hợp lệ.';
+      else if (mode === 'sub' && v < 1) err = 'Số Coin trừ phải lớn hơn 0.';
+      else if (mode === 'sub' && v > cur.coins) err = `Không thể trừ quá số dư hiện tại (${fmtNum(cur.coins)} Coin).`;
+      else if (mode === 'set' && (v < 0 || v > MAX_COIN)) err = 'Số dư mới phải từ 0 trở lên.';
+      if (raw !== '' && !err && Number.isFinite(v)) next = mode === 'add' ? cur.coins + v : mode === 'sub' ? cur.coins - v : v;
+      if (mode === 'sub' && cur.coins === 0) err = 'Số dư đang là 0, không thể trừ thêm.';
+      $('#coinPreview').innerHTML = next === null ? '' : `Số dư sau thao tác: <b style="color:var(--ok)">${fmtNum(next)} Coin</b>`;
+      setMsg('#msgCoin', err, err ? 'err' : '');
+      const ok = $('#coinOk'); if (ok) ok.disabled = next === null || !!err;
+      return { next, err };
+    };
+    Modal.open({
+      title: titles[mode] + ' · ' + target.username, html,
+      buttons: [
+        { label: 'Huỷ', cls: 'btn-ghost', onClick: Modal.close },
+        { label: 'Xác nhận', id: 'coinOk', disabled: true, onClick: () => {
+          if (!requireAdmin()) return;
+          const { next } = compute();
+          const cur = getUser(username);
+          if (next === null || !cur) return;
+          cur.coins = next;
+          commit();
+          Admin.renderUsers();
+          if (activeTab === 'settings') Settings.render();
+          Modal.close();
+          toast(`Đã cập nhật số dư của ${cur.username}: ${fmtNum(next)} Coin.`, 'ok');
+        } }
+      ],
+      onOpen: () => {
+        const inp = $('#coinAmt');
+        inp.addEventListener('input', compute);
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); const ok = $('#coinOk'); if (ok && !ok.disabled) ok.click(); } });
+        inp.focus();
+        compute();
+      }
+    });
+  }
+};
+
+/* =====================================================================
+ * APP (bootstrap + events)
+ * ===================================================================== */
+const App = {
+  showAuth() {
+    $('#appView').hidden = true;
+    $('#authView').hidden = false;
+    Auth.switchTab('login');
+    $('#liUser').focus();
+  },
+  enter(username) {
+    currentUsername = username;
+    $('#authView').hidden = true;
+    $('#appView').hidden = false;
+    renderHeader();
+    buildNav();
+    renderPackages();
+    Locket.profile = null;
+    Locket.render();
+    switchTab('upgrade');
+  },
+  bind() {
+    // Auth
+    $('#formLogin').addEventListener('submit', e => safe(() => Auth.login(e)));
+    $('#formRegister').addEventListener('submit', e => safe(() => Auth.register(e)));
+    $('#formForgot').addEventListener('submit', e => safe(() => Auth.forgot(e)));
+    $('#authTabs').addEventListener('click', e => {
+      const b = e.target.closest('[data-auth]'); if (b) Auth.switchTab(b.dataset.auth);
+    });
+    $$('[data-auth-go]').forEach(a => a.addEventListener('click', () => Auth.switchTab(a.dataset.authGo)));
+    $('#btnLogout').addEventListener('click', () => safe(Auth.logout));
+
+    // Nav
+    $('#nav').addEventListener('click', e => {
+      const b = e.target.closest('[data-tab-btn]'); if (b) safe(() => switchTab(b.dataset.tabBtn));
+    });
+
+    // Upgrade
+    $('#btnLookup').addEventListener('click', () => safe(Locket.lookup));
+    $('#locketInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); safe(Locket.lookup); } });
+    $('#btnTestNone').addEventListener('click', () => safe(() => Locket.setTest('test-none')));
+    $('#btnTestGold').addEventListener('click', () => safe(() => Locket.setTest('test-gold')));
+    $('#btnActivate').addEventListener('click', () => safe(startPurchase));
+
+    // Topup / settings / admin
+    $('#btnNewCode').addEventListener('click', () => safe(Topup.newCode));
+    $('#formPass').addEventListener('submit', e => safe(() => Settings.changePass(e)));
+    $('#formPrices').addEventListener('submit', e => safe(() => Admin.savePrices(e)));
+    $('#formApi').addEventListener('submit', e => safe(() => Admin.saveApi(e)));
+    $('#apiShow').addEventListener('change', e => Admin.toggleSecret(e.target.checked));
+
+    // Delegated actions + copy
+    document.addEventListener('click', e => safe(() => {
+      const cp = e.target.closest('[data-copy]');
+      if (cp) {
+        return copyText(cp.dataset.copy).then(ok => toast(ok ? 'Đã sao chép!' : 'Không thể sao chép, hãy copy thủ công.', ok ? 'ok' : 'err', 2200));
+      }
+      const el = e.target.closest('[data-action]'); if (!el) return;
+      const a = el.dataset.action;
+      if (a === 'goto-tab') switchTab(el.dataset.tabId);
+      else if (a === 'dns') Orders.showDNS(el.dataset.oid);
+      else if (a === 'amount') Topup.setAmount(Number(el.dataset.amount));
+      else if (a === 'coin-add') Admin.openCoinModal('add', el.dataset.user);
+      else if (a === 'coin-sub') Admin.openCoinModal('sub', el.dataset.user);
+      else if (a === 'coin-set') Admin.openCoinModal('set', el.dataset.user);
+    }));
+
+    // Sync across browser tabs
+    window.addEventListener('storage', e => safe(() => {
+      if (e.key !== DB_KEY || !currentUsername) return;
+      appDB = loadDB();
+      if (!me()) { Auth.logout(); return; }
+      renderHeader(); renderPackages();
+      if (activeTab === 'orders') Orders.render();
+      if (activeTab === 'admin') Admin.renderUsers();
+    }));
+  },
+  init() {
+    appDB = loadDB();
+    $('#yr').textContent = new Date().getFullYear();
+    App.bind();
+    const su = Auth.getSessionUser();
+    if (su) App.enter(su); else App.showAuth();
+  }
+};
+
+try { App.init(); } catch (e) { handleErr(e); }
+})();
+</script>
+</body>
+</html>
